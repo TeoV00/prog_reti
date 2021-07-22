@@ -12,7 +12,7 @@ import http.server
 import socketserver
 import cgi
 import json
-#import wget #se non presente va installato 
+import wget #se non presente va installato 
 
 #modulo per estrapolazione di parametri da richiesta tipo GET
 #da installare pip install w3lib
@@ -131,6 +131,11 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(bytes(addDoctorSuccessPage, 'utf-8'))
                 
             else:
+                if request == COVID_PAGE:
+                    
+                else:
+                    #se non si tratta di nessun caso sopra chiamo il metodo del
+                    #modulo per risolvere la richiesta
                 return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
     def do_POST(self):
@@ -217,8 +222,9 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             else :
                 self.send_error(404, 'Richiesta non gestita')
 
+#ritorna la pagina web generata
+def refreshData():
     
-
 
 Handler = MyHttpRequestHandler
 #configurazione di un server multi thread per consentire l'accesso multimo
@@ -240,6 +246,10 @@ def signal_handler(signal, frame):
         
 #l'interupt da tastiera (ctrl-c) avvia signal_handler
 signal.signal(signal.SIGINT, signal_handler)
+
+#scarico il file json con i dati delle vaccinazioni in locale
+# TODO primo scaricamento dati covid
+refreshData()
 
 while True:
     server.serve_forever()
