@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	</head>
+<style>
+
+#menuBar{
+text-align: center;
+color: black;
+}
+
+.menuLink{
+color: black;
+
+}
+
+.menuLink:hover{
+color: grey;
+
+}
+</style>
+
+<script>	
+const xhttp = new XMLHttpRequest();
+xhttp.onload = function() {
+  var pren = JSON.parse(this.responseText);
+  var lenghtList = Object.keys(pren.prenotazioni).length;
+	
+  pTable= "<table><tr> <th>Nome</th><th>Cognome</th><th>Cod.Dottore</th><th>Servizio</th></tr>";
+  var i;
+	for(i=0; i< lenghtList; i++){
+		pTable += "<tr><td>"+pren.prenotazioni[i].name+"</td><td>"+
+					pren.prenotazioni[i].lastName+"</td><td>"+pren.prenotazioni[i].doctor
+				+"</td><td>"+pren.prenotazioni[i].service+"</td></tr>";
+	}
+	pTable += "</table>";
+  document.getElementById("prenTable").innerHTML = pTable;
+  }
+xhttp.open("GET", "/json/prenotazioni.json");
+xhttp.send();
+
+function showDoctor(){
+var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+    	var dott = JSON.parse(this.responseText);
+      	var lenghtList = dott.name.length;
+      	var dTable= "<table><tr> <th>Nome</th><th>Cod.Dottore</th></tr>";
+      	var i;
+      	for(i=0;i<lenghtList;i++){
+      		dTable += "<tr><td>"+ dott.name[i] +"</td><td>"+ dott.code[i]+"</td></tr>";
+      	}
+      	dTable += "</table>";
+      	document.getElementById("tableDott").innerHTML = dTable;
+    }
+  };
+  xhttp.open("GET", "/json/dottori.json", true);
+  xhttp.send();
+
+}
+
+</script>
+
+<body>
+
+<div>
+	
+	<h2> Ospedale -> Administration</h2>
+		<div id="menuBar">
+		<a class="menuLink" href="index.html">Home</a>
+		<a class="menuLink" href="info.html">Info</a>
+		</div>
+</div>
+<div id="doctorManage">
+	<h3>Gestione Dottori</h3>
+	<p>Il dottore aggiunto sarà visibile nell'elenco dei dottori nella sezione "Prenota prestazione"</p>
+	    <form method="get" accept-charset=utf-8>
+		<p>
+		<label for="dottName">Nome:</label>
+  		<input type="text" id="dottName" name="dottName"><br>
+		</p>
+		<p>
+		<label for="dottCode">Codice Dott.:</label>
+  		<input type="text" id="dottCode" name="dottCode"><br><br>
+		</p>
+		<p>
+		<label for="mode">Aggiungi</label>
+  		<input type="radio" id="modeAdd" name="mode" value="add" checked="checked">
+  		<br>
+  		<label for="mode">Rimuovi</label>
+  		<input type="radio" id="modeRemove" name="mode" value="remove">
+  		</p>
+		<input type="submit" value="Applica" style="">
+		<input type="reset">
+	     </form>
+	     <button type="button"onclick="showDoctor()">Mostra Medici</button>
+	     <div id="tableDott"></div>
+	</div>
+<div id="prenotView">
+	<h3>Elenco Prenotazioni</h3>
+	Aggiornare la pagina per visualizzare l'elenco aggiornato dopo una recente prenotazione
+	<div id="prenTable"></div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	</head>
+<style>
+
+#menuBar{
+text-align: center;
+color: black;
+}
+
+.menuLink{
+color: black;
+
+}
+
+.menuLink:hover{
+color: grey;
+
+}
+</style>
+
+<script>
+const xhttp = new XMLHttpRequest();
+xhttp.onload = function() {
+  var tableTime = JSON.parse(this.responseText)
+  document.getElementById("orari").innerHTML =
+	  "lunedi "+tableTime.lunedi + "<br>" +
+	  "martedi"+tableTime.martedi +"<br>" +
+	  "mercoledi "+tableTime.mercoledi +"<br>" +
+      "giovedi "+tableTime.giovedi +"<br>" +
+      "venerdi "+tableTime.venerdi +"<br>" +
+      "sabato "+tableTime.sabato +"<br>" +
+      "domenica "+tableTime.domenica;
+  }
+xhttp.open("GET", "/json/orari.json");
+xhttp.send();
+</script>
+
+<body>
+
+<div>
+	<p>
+	<h2> Ospedale -> Info</h2>
+		<div id="menuBar">
+		<a class="menuLink" href="index.html">Home</a>
+		<a class="menuLink" href="info.html">Info</a>
+		</div>
+	</p>
+</div>
+<h3>Orari Visite</h3>
+<div id="orari"></div>
+
+<h3>Numeri Utili</h3>
+<p id="numeri">Segreteria: 0542 0255055</p>
+
+</body>
+</html>
