@@ -23,6 +23,7 @@ ADMIN_PAGE = '/admin.html'
 COVID_PAGE = '/covid.html'
 ADD_DOTT = 'add'
 RMV_DOTT = 'remove'
+PREN_PAGE = '/prenVisita.html'
 
 #configurazione porta socket server, se non specificata il default è 8080
 if sys.argv[1:] :
@@ -181,7 +182,6 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                 request.__contains__("dottCode")):
                 print("RICHIESTA AGGIUNTA DOTTORE")
                 self.editDoctorRequest()
-    
             else:
                 if request == COVID_PAGE:
                     self.send_response(200)
@@ -191,9 +191,15 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                     #restituisco la pagina con tab covid aggiornata
                     self.wfile.write(bytes(covidHTML, 'utf-8'))
                 else:
-                    #se non si tratta di nessun caso sopra chiamo il metodo del
-                    #modulo per risolvere la richiesta
-                    return http.server.SimpleHTTPRequestHandler.do_GET(self)
+                    if request == PREN_PAGE:
+                        prenHTML = HTMLgen.genPrenotVisita()
+                        self.send_response(200)
+                        self.end_headers()
+                        self.wfile.write(bytes(prenHTML, 'utf-8'))
+                    else:
+                        #se non si tratta di nessun caso sopra chiamo il metodo del
+                        #modulo per risolvere la richiesta
+                        return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
     def doPrenotazione(self):
         print('\nPrenotazione_POST')

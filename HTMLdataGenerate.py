@@ -43,13 +43,14 @@ OUT_PATH_JSON = 'json' #relative path
 
 def refreshCovidData():
     name_file= wget.detect_filename(DATA_FILE)
-#se il file esiste lo cancello dalla directory
-    if exists(name_file):
-        os.remove(name_file)
+    pathFile = OUT_PATH_JSON + '/' + name_file
+    #se il file esiste lo cancello dalla directory
+    if exists(pathFile):
+        os.remove(pathFile)
         print("File vecchio rimosso\n")
         #scarico il file da github elo salvo nella dir. corrente
     wget.download(DATA_FILE,OUT_PATH_JSON)
-    pathFile = OUT_PATH_JSON + '/' + name_file
+    
     #apro il file e lo converto tramite modulo json in oggetto python (dictionary)
     with open(pathFile,"r") as data:
         lines = data.read()
@@ -83,9 +84,51 @@ def refreshCovidData():
     table = tableHeader + dataRow + tableClose
     return topHTML+covidTitle+topHTML2 +table + bottomHTML
 
+topBodyPrenot= '''
+<div>
+		<form method="post" accept-charset=utf-8>
+			<div>
+				Selezionare Dottore:'''
+				#qui va inserito il selettore con elenco aggiornato 
+bottomBodyPrenot='''				
+			</div>
+			<div>
+				<p> Selezionare prestazione: 
+					<select name="prestazione" style="font-size: 12pt">
+ 					<option value="tampone">Tampone</option>
+  					<option value="sangue">ananlisi sangue</option>
+  					<option value="visita-specilistica">visita specilistica</option>
+  					<option value="intervento">intervento</option>
+					</select>
+				</p>
+			</div>
+			<p>
+				<label for="fname">Nome:</label>
+  				<input type="text" id="fname" name="fname"><br>
+			</p>
+			<p>
+				<label for="lname">Cognome:</label>
+  				<input type="text" id="lname" name="lname"><br><br>
+			</p>
+			<input type="submit" value="Submit" style="">
+		</form>
+	</div>
+'''
+
 def genPrenotVisita():
-    bodyPage = ''
-    return topHTML + prenTitle + topHTML2 + bodyPage + bottomHTML
+    #con questo metodo si genera la pagina della prenotazione con la select list
+    #aggiornata con i medici nuovi aggiunti
+    bodyPage = topBodyPrenot + '<select name="doctor" style="font-size: 12pt">'
+    with open("json/dottori.json", "r") as out:
+        lines = out.read()
+        dott=json.loads(lines)
+    
+    for dottName in dott["name"]:
+        idx_name = dott["name"].index(dottName)
+        bodyPage += '<option value="'+ dott["code"][idx_name] +'">'+ dottName+'</option>'
+    bodyPage += '</select>'
+
+    return topHTML + prenTitle + topHTML2 + bodyPage + bottomBodyPrenot + bottomHTML
 
     
     
