@@ -41,6 +41,19 @@ bottomHTML= '''</div></body></html>'''
 DATA_FILE= 'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/vaccini-summary-latest.json'
 OUT_PATH_JSON = 'json' #relative path
 
+def convertLabelCovid(nameField):
+    #se nameField non corrispopnde a nessun caso viene restituito non modificato
+    newLabel = nameField
+    if nameField == "percentuale_somministrazione":
+        newLabel = '%'
+    if nameField == "dosi_somministrate":
+        newLabel = "somministrate"
+    if nameField == "dosi_consegnate":
+        newLabel =  "consegnate"
+    if nameField == "nome_area":
+        newLabel = "regione"
+    return newLabel
+
 def refreshCovidData():
     name_file= wget.detect_filename(DATA_FILE)
     pathFile = OUT_PATH_JSON + '/' + name_file
@@ -65,8 +78,11 @@ def refreshCovidData():
     #creazione intestazione della table
     for field in data["schema"]["fields"]:
         nameField = field["name"]
-        headerList.append(nameField)
-        headerRow += '<th>'+ nameField +'</th>'
+        if nameField != "ultimo_aggiornamento":
+            headerList.append(nameField)
+        nameField = convertLabelCovid(nameField)
+        if nameField != "ultimo_aggiornamento":
+            headerRow += '<th>'+ nameField +'</th>'
         
     #composizione di header table dati
     tableHeader += headerRow + rowClose
@@ -80,9 +96,11 @@ def refreshCovidData():
             dataRow += '<td>'+ str(dataValue[dataName]) +'</td>'
             
         dataRow += '</tr>'
-
+        
+        dataTime=data["data"][0]["ultimo_aggiornamento"]
+    lastUpdateInfo = '<p>Ultimo aggiornamento: </p>' + dataTime
     table = tableHeader + dataRow + tableClose
-    return topHTML+covidTitle+topHTML2 +table + bottomHTML
+    return topHTML+covidTitle+topHTML2 + lastUpdateInfo + table + bottomHTML
 
 topBodyPrenot= '''
 <div>

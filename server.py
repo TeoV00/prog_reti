@@ -87,7 +87,7 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         editMode= url_param(request, 'mode')
 #       print(nameDoctor)
 #       print(codeDoctor)
-#        print(editMode)
+#       print(editMode)
         #memorizzazione nuovo medico nel file json (databse ipotetico)
         with open("json/dottori.json", "r+") as out:
                 #conversione dei file json in oggetto python--> vocabolario
@@ -151,6 +151,8 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                 users = json.loads(inFile.read())
 
                 if (users[user] == pssw):
+                    #se esiste l'username inserito si verifica che la password
+                    #digitata corrisonda con quella salvata nel database (login.json)
                     self.send_response(200)
                     self.end_headers()
                     with open("admin.html", "r") as adminPage:
@@ -165,7 +167,7 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(bytes(loginErrorPage,'utf-8'))
 
-           
+    #in questo metodo si definisce come il server deve agirea richieste di tipo GET      
     def do_GET(self):
         request = self.path
         print('file REQUESTED: ' + request)
@@ -184,6 +186,7 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.editDoctorRequest()
             else:
                 if request == COVID_PAGE:
+                    #il client ha rischiesto la pagina con i dati covid
                     self.send_response(200)
                     self.end_headers()
                     #scarico il file json con i dati delle vaccinazioni in locale
@@ -192,13 +195,17 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                     self.wfile.write(bytes(covidHTML, 'utf-8'))
                 else:
                     if request == PREN_PAGE:
+                        #il client ha richiesto la pagina delle prenotazioni
+                        #genera la pagina delle prenotazioni a runtime
                         prenHTML = HTMLgen.genPrenotVisita()
                         self.send_response(200)
                         self.end_headers()
+                        #invio la pagina della prenotazione al client in risposta
                         self.wfile.write(bytes(prenHTML, 'utf-8'))
                     else:
                         #se non si tratta di nessun caso sopra chiamo il metodo del
-                        #modulo per risolvere la richiesta
+                        #modulo per risolvere la richiesta e restituire il file
+                        #, se presente nella path, corrispondente all 'url digitato
                         return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
     def doPrenotazione(self):
