@@ -15,7 +15,7 @@ tramite terminale
 
 ## Utilizzo
 Da terminale avviare il webServer con il comando:
-'''
+
 python3 server.py [port]
-'''
+
 il campo port se non specificato è 8080
