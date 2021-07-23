@@ -42,7 +42,8 @@ dei medici selezionabile all'atto di prneotazione di una prestazione nella pagin
 	cgi
 	json
 	w3lib.url
-Per installare le librerie mancanti utilizzare il package manager pip tramite terminale	
+Per installare le librerie mancanti utilizzare il package manager pip tramite terminale
+	pip install [nome pacchetto]
 
 ## Utilizzo
 Da terminale avviare il webServer con il comando:
