@@ -2,7 +2,7 @@
 Webserver di una ipotetica azienda ospedaliera
 
 La home page presenta diversi link che portano a pagine indipendenti che
-mostrano infomrazioni o possono fornire servizi per i pazienti.
+mostrano informzioni o possono fornire servizi per i pazienti.
 
 Nella pagina di prenotazione è quindi possbile effettuare una prenotazione
 per un prestazione sanitaria, lasciando la possbilità di scegliere il medico
