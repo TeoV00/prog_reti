@@ -33,7 +33,7 @@ color: grey;}
 
 topHTML2='''<div id="menuBar"><a class="menuLink" href="index.html">Home</a>
             <a class="menuLink" href="info.html">Info</a></p></div>'''
-covidTitle= '<h2> Ospedale -> Statistiche Covid</h2>'
+covidTitle= '<h2> Ospedale -> Statistiche Vaccinazioni Covid</h2>'
 prenTitle= '<h2> Ospedale -> Prenota Prestazione</h2>'
 
 bottomHTML= '''</div></body></html>'''
