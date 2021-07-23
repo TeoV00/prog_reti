@@ -27,7 +27,7 @@ PREN_PAGE = '/prenVisita.html'
 
 #configurazione porta socket server, se non specificata il default è 8080
 if sys.argv[1:] :
-    port = int(sys.argv[1:])
+    port = int(sys.argv[1])
 else:
     port = 8080
 
@@ -36,6 +36,7 @@ server_addr= ('',port)
 #pagina di accesso alla schermata da amministratore
 logInPage= '''<html><body>
                 <form method="post" accept-charset=utf-8>
+                <h2>Accesso Amministratore</h2>
                 <p>
 				<label for="user">User: </label>
   				<input type="text" id="user" name="user"><br>
@@ -288,7 +289,8 @@ def signal_handler(signal, frame):
         
 #l'interupt da tastiera (ctrl-c) avvia signal_handler
 signal.signal(signal.SIGINT, signal_handler)
-
+print("Server avviato correttamente\n")
+print("...in attesa di richieste sulla porta: "+ str(port))
 while True:
     server.serve_forever()
 
