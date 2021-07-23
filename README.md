@@ -20,12 +20,12 @@ Il link "Regolamento (PDF)" permette lo scaricamento di un file PDF.
 
 Per finire il sito web oltre a fornire Info come orario e numeri di telefono utili nella 
 apposita pagina cliccando il link "Info", permette l'accesso come amministratore.
-In questa paginaè possibile aggiungere e togliere medici, indicando nome e codice medico 
+In questa pagina è possibile aggiungere e togliere medici, indicando nome e codice medico 
 (attualmente per la cancellazione occorre solo il nome).
 Conclusa la modifica si viene reindirizzati ad una pagina di conferma, in caso contrario
 si visualizzerà una pagina di errore con un link per ritornare indietro.
 Dopo ogni modifica occorre, per sicurezza, rieffettuare il login.
-Ovviamente è presente un pulsante per visulaizzare l'elenco dei medici attualmente presenti
+Ovviamente è presente un pulsante per visualizzare l'elenco dei medici attualmente presenti
 del database (file json).
 In questa pagina sono mostrate anche tutte le prenotazioni effettuate dai pazienti in una 
 tabella. Sono indicati nome, congome, codDottore e servizio richiesto.
