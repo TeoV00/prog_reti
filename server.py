@@ -271,6 +271,8 @@ Handler = MyHttpRequestHandler
 server = socketserver.ThreadingTCPServer(server_addr,Handler)
 
 server.daemon_threads = True 
+
+#concede la riassegnazione del socket
 server.allow_reuse_address = True
 
 
