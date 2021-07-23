@@ -1,6 +1,7 @@
 # WebServer Reti
 Webserver di una ipotetica azienda ospedaliera
-la home page presenta diversi link che portano a pagine indipendenti che
+
+La home page presenta diversi link che portano a pagine indipendenti che
 mostrano infomrazioni o possono fornire servizi per i pazienti.
 
 Nella pagina di prenotazione è quindi possbile effettuare una prenotazione
