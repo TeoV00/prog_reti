@@ -66,7 +66,8 @@ addDoctorSuccessPage ='''<html>
 
 editDoctorFailPage = '''<html>
 <body><h2>Aggiunta/Rimozione dottore NON CONCLUSA</h2>
-<p>Il nome inserito non corripsonde a nessun medico presente nel sistema</p>
+<p>Caso di aggiunta: Medico già presente o presenza di campi vuoti <br>
+Caso rimozione: Medico assente nel database</p>
 <p>Clicca qui per tonrare indietro--> <a href="admin.html">Indietro<a></p>
 </body></html>'''
 
@@ -88,7 +89,7 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         request = self.path
         # estrapolazione dati prenotazione ricevuti dal form
         nameDoctor= url_param( request,'dottName')
-        codeDoctor= url_param( request,'dottSurn')
+        surDoctor= url_param( request,'dottSurn')
         editMode= url_param(request, 'mode')
 #       print(nameDoctor)
 #       print(codeDoctor)
@@ -101,13 +102,17 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                 try:
                     if editMode == ADD_DOTT:
                         #se i campi sono vuoti non aggiungere medico vuoto
-                        if (not nameDoctor) or (not codeDoctor):
+                        if (not nameDoctor) or (not surDoctor):
                             #se uno dei due campi è vuoto si genera una eccezione
                             #che manda al client la pagina di fallimento aggiunta
                            raise TypeError
                         else:
-                           dott["name"].append(nameDoctor)
-                           dott["surn"].append(codeDoctor)
+                            if nameDoctor not in dott["name"] and surDoctor not in dott["surn"]:
+                                dott["name"].append(nameDoctor)
+                                dott["surn"].append(surDoctor)
+                            else:
+                                #se il medico è già presente impedisce di mettere doppi
+                                raise TypeError
                     else:
                        #richiesta di cancellazione dottore, effetuata solo 
                        #se presente nel database
