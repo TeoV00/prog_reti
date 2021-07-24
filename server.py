@@ -89,59 +89,63 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         request = self.path
         # estrapolazione dati prenotazione ricevuti dal form
         nameDoctor= url_param( request,'dottName')
-        surDoctor= url_param( request,'dottSurn')
+        codeDoctor= url_param( request,'dottCode')
         editMode= url_param(request, 'mode')
 #       print(nameDoctor)
 #       print(codeDoctor)
 #       print(editMode)
         #memorizzazione nuovo medico nel file json (databse ipotetico)
         with open("json/dottori.json", "r+") as out:
-                #conversione dei file json in oggetto python--> vocabolario
-                dott =json.loads(out.read())
-                #aggiunta del dottore inserito nel file
-                try:
-                    if editMode == ADD_DOTT:
-                        #se i campi sono vuoti non aggiungere medico vuoto
-                        if (not nameDoctor) or (not surDoctor):
-                            #se uno dei due campi è vuoto si genera una eccezione
-                            #che manda al client la pagina di fallimento aggiunta
-                           raise TypeError
-                        else:
-                            if nameDoctor not in dott["name"] and surDoctor not in dott["surn"]:
-                                dott["name"].append(nameDoctor)
-                                dott["surn"].append(surDoctor)
-                            else:
-                                #se il medico è già presente impedisce di mettere doppi
-                                raise TypeError
+            #conversione dei file json in oggetto python--> vocabolario
+            dott =json.loads(out.read())
+            #aggiunta del dottore nel file
+        print(dott)
+        try:
+            if editMode == ADD_DOTT:
+            #se i campi sono vuoti non aggiungere medico vuoto
+                if (not nameDoctor) or (not codeDoctor):
+                    #se uno dei due campi è vuoto si genera una eccezione
+                    #che manda al client la pagina di fallimento aggiunta
+                    raise TypeError
+                else:
+                    if codeDoctor in dott["code"]:
+                    #se il medico è già presente impedisce di mettere doppi
+                        raise TypeError
                     else:
-                       #richiesta di cancellazione dottore, effetuata solo 
-                       #se presente nel database
-                       if nameDoctor in dott["name"] and editMode == RMV_DOTT:
-                           #ricava l'indice in cui si trova il cod. del medico
-                           idx_name = dott["name"].index(nameDoctor)
-                           
-                           #rimozione di nameDoctor e codeDoctor dal dizionario python
-                           #che poi sara convertito in file json
-                           dott["name"].pop(idx_name)
-                           dott["surn"].pop(idx_name)
-                       
-                       else:
-                          raise TypeError
+                        dott["name"].append(nameDoctor)
+                        dott["code"].append(codeDoctor)
+                        print("AGGIUNTO dottore: "+ str(nameDoctor) +', '+ str(codeDoctor))
+            else:
+            #richiesta di cancellazione dottore, effetuata solo 
+            #se presente nel database
+                if codeDoctor in dott["code"] and editMode == RMV_DOTT:
+                #ricava l'indice in cui si trova il cod. del medico
+                    idx_code = dott["code"].index(codeDoctor)
+                    print("inizio rimozione dottore ")
+                    print(dott["name"][idx_code] +' '+dott["code"][idx_code])
+                    #rimozione di nameDoctor e codeDoctor dal dizionario python
+                    #che poi sara convertito in file json
+                    dott["name"].pop(idx_code)
+                    dott["code"].pop(idx_code)
+                else:
+                    raise TypeError
 
-                    print(dott)
-                   
-                    #cancellazione del file
-                    out.seek(0)
-                    out.truncate()
-                    #scrittura dell'oggeto python in formato json
-                    json.dump(dott,out)
-                    #risposta di OK al client
-                    self.send_response(200)
-                    self.end_headers()
-                    #invio di pagina di conferma aggiunta dottore
-                    self.wfile.write(bytes(addDoctorSuccessPage, 'utf-8'))
-                except:
-                    self.failDoctorPage()
+            with open("json/dottori.json", "r+") as out:           
+                #cancellazione del file
+                out.seek(0)
+                out.truncate()
+                #scrittura dell'oggeto python in formato json
+                json.dump(dott,out)
+                
+            #risposta di OK al client
+            self.send_response(200)
+            self.end_headers()
+            #invio di pagina di conferma aggiunta dottore
+            self.wfile.write(bytes(addDoctorSuccessPage, 'utf-8'))
+            
+        except Exception as e:
+            print("Errore: "+ str(e))
+            self.failDoctorPage()
 
     def checkLogin(self):
         try:
@@ -154,7 +158,7 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             #(si trascura la sicurezza dei dati)
             user= form.getvalue('user')
             pssw= form.getvalue('psw')
-            
+            print(user +' '+ pssw)
             with open("json/login.json", "r") as inFile:
                 #caricamento e conversione dati da formato json a 
                 #dictionary di python
@@ -169,11 +173,13 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                     self.wfile.write(bytes(adminHTMLpage, 'utf-8'))
 
                 else:
+                    print("Password errata")
                     self.send_response(401)
                     self.end_headers()
                     self.wfile.write(bytes(loginErrorPage,'utf-8'))
                                     
-        except :
+        except Exception as e:
+            print(e)
             self.send_response(401)
             self.end_headers()
             self.wfile.write(bytes(loginErrorPage,'utf-8'))
@@ -192,8 +198,8 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             #l'aggiunta del medico
             if (request.__contains__(ADMIN_PAGE) and 
                 request.__contains__("dottName") and
-                request.__contains__("dottSurn")):
-                print("RICHIESTA AGGIUNTA DOTTORE")
+                request.__contains__("dottCode")):
+                print("RICHIESTA Modifica DOTTORi")
                 self.editDoctorRequest()
             else:
                 if request == COVID_PAGE:

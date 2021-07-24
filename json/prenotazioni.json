@@ -1,5 +1,7 @@
 {
  "prenotazioni":[
-{"name": "Paolo","lastName" :"De Paoli", "doctor" : "prova","service" : "tampone" }
+{"name": "Prova","lastName" :"Prova", "doctor" : "Prova","service" : "sangue" } 
+,{"name": "Matteo","lastName" :"Viola", "doctor" : "P009","service" : "tampone" } 
+,{"name": "Nome","lastName" :"Cognome", "doctor" : "Codice","service" : "tampone" } 
 ] 
  }

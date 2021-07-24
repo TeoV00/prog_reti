@@ -145,10 +145,11 @@ def genPrenotVisita():
         lines = out.read()
         dott=json.loads(lines)
     
-    for dottName in dott["name"]:
-        idx_name = dott["name"].index(dottName)
-        code_name_dott = dottName+' '+dott["surn"][idx_name]
-        bodyPage += '<option value="'+ code_name_dott+'">'+ code_name_dott+'</option>'
+    for dottCode in dott["code"]:
+        idx_code = dott["code"].index(dottCode)
+        code_name_dott = dott["name"][idx_code]+' '+dottCode
+        print(code_name_dott + ' '+ dottCode)
+        bodyPage += '<option value="'+ dott["code"][idx_code]+'">'+ code_name_dott+'</option>'
     bodyPage += '</select>'
 
     return topHTML + prenTitle + topHTML2 + bodyPage + bottomBodyPrenot + bottomHTML
@@ -163,10 +164,10 @@ formDott = '''
   		<input type="text" id="dottName" name="dottName"><br>
 		</p>
 		<p>
-		<label for="dottSurn">Cognome:</label>
-  		<input type="text" id="dottSurn" name="dottSurn"><br><br>
+		<label for="dottCode">Codice:</label>
+  		<input type="text" id="dottCode" name="dottCode"><br><br>
 		</p>
-		<p>(Nella rimozione occorre solo il nome del dottore)</p>
+		<p>(Nella rimozione occorre solo il codice del dottore)</p>
 		<p>
 		<label for="mode">Aggiungi</label>
   		<input type="radio" id="modeAdd" name="mode" value="add" checked="checked">
@@ -191,16 +192,16 @@ def genAdminHTMLPage():
         lines = out.read()
         dott=json.loads(lines)
 
-    for dottName in dott["name"]:
-        idx_name = dott["name"].index(dottName)
-        dottTable +="<tr><td>"+ dottName +"</td><td>"+ dott["surn"][idx_name] +"</td></tr>"
+    for dottCode in dott["code"]:
+        idx_name = dott["code"].index(dottCode)
+        dottTable +="<tr><td>"+dott["name"][idx_name]+"</td><td>"+ dottCode +"</td></tr>"
     
     dottTable += formDottClose
     pageHTML += dottTable + prenView
     
     #generazione tabella prenotazioni
     prenTable = '''<table><tr> <th>Nome</th><th>Cognome</th><th>Dottore</th>
-                    <th>Servizio</th></tr>'''
+                    <th>Cod.Dottore</th><th>Servizio</th></tr>'''
     
     with open("json/prenotazioni.json", "r") as out:
         lines = out.read()
@@ -208,8 +209,15 @@ def genAdminHTMLPage():
         
     #costruzione della tabella prenotazioni
     for pren in pren["prenotazioni"]:
+        dottCode=pren["doctor"]
+        
+        if dottCode in dott["code"]:
+            idx_name = dott["code"].index(dottCode)
+            nameD=dott["name"][idx_name]
+        else:
+            nameD=" "
         prenTable += ('<tr><td>'+pren["name"]+'</td><td>'+pren["lastName"]+'</td><td>'+
-                        pren["doctor"]+'</td><td>'+pren["service"]+'</td></tr>')
+                       nameD +'</td><td>'+pren["doctor"]+'</td><td>'+pren["service"]+'</td></tr>')
     prenTable +='</table></div>'
     
     pageHTML += prenTable+bottomHTML
