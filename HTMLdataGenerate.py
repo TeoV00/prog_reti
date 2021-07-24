@@ -31,10 +31,13 @@ color: grey;}
 <div>
 <p>'''
 
-topHTML2='''<div id="menuBar"><a class="menuLink" href="index.html">Home</a>
-            <a class="menuLink" href="info.html">Info</a></p></div>'''
 covidTitle= '<h2> Ospedale -> Statistiche Vaccinazioni Covid</h2>'
 prenTitle= '<h2> Ospedale -> Prenota Prestazione</h2>'
+adminTitle= '<h2> Ospedale -> Administration</h2>'
+
+topHTML2='''<div id="menuBar"><a class="menuLink" href="index.html">Home</a>
+            <a class="menuLink" href="info.html">Info</a></p></div>'''
+
 
 bottomHTML= '''</div></body></html>'''
 
@@ -69,10 +72,11 @@ def refreshCovidData():
         lines = data.read()
         data=json.loads(lines)
 
-    tableHeader= '<table><tr>'
+    tableHeader= '<table id="covidTable"><tr>'
     rowClose= '</tr>'
     tableClose = '</table>'
     headerRow = ''
+    #array di intestazioni della tabella
     headerList = []
 
     #creazione intestazione della table
@@ -114,8 +118,8 @@ bottomBodyPrenot='''
 				<p> Selezionare prestazione: 
 					<select name="prestazione" style="font-size: 12pt">
  					<option value="tampone">Tampone</option>
-  					<option value="sangue">ananlisi sangue</option>
-  					<option value="visita-specilistica">visita specilistica</option>
+  					<option value="sangue">analisi sangue</option>
+  					<option value="visita-specialistica">visita specialistica</option>
   					<option value="intervento">intervento</option>
 					</select>
 				</p>
@@ -143,16 +147,70 @@ def genPrenotVisita():
     
     for dottName in dott["name"]:
         idx_name = dott["name"].index(dottName)
-        bodyPage += '<option value="'+ dott["code"][idx_name] +'">'+ dottName+'</option>'
+        code_name_dott = dottName+' '+dott["surn"][idx_name]
+        bodyPage += '<option value="'+ code_name_dott+'">'+ code_name_dott+'</option>'
     bodyPage += '</select>'
 
     return topHTML + prenTitle + topHTML2 + bodyPage + bottomBodyPrenot + bottomHTML
 
+formDott = '''
+<div id="doctorManage">
+	<h3>Gestione Dottori</h3>
+	<p>Il dottore aggiunto sarà visibile nell'elenco dei dottori nella sezione "Prenota prestazione"</p>
+	    <form method="get" accept-charset=utf-8>
+		<p>
+		<label for="dottName">Nome:</label>
+  		<input type="text" id="dottName" name="dottName"><br>
+		</p>
+		<p>
+		<label for="dottSurn">Cognome:</label>
+  		<input type="text" id="dottSurn" name="dottSurn"><br><br>
+		</p>
+		<p>(Nella rimozione occorre solo il nome del dottore)</p>
+		<p>
+		<label for="mode">Aggiungi</label>
+  		<input type="radio" id="modeAdd" name="mode" value="add" checked="checked">
+  		<br>
+  		<label for="mode">Rimuovi</label>
+  		<input type="radio" id="modeRemove" name="mode" value="remove">
+  		</p>
+		<input type="submit" value="Applica" style="">
+		<input type="reset">
+	     </form>
+ '''
+formDottClose= '</table><div id="tableDott"></div></div>'
+prenView='''<div id="prenotView"><h3>Elenco Prenotazioni</h3>'''
+
+def genAdminHTMLPage():
+    #metodo per la generazione della pagina di Amministrazione con tabelle
+    #aggiornate di medici e visite
+    dottTable = '<table><tr> <th>Nome</th><th>Cod.Dottore</th></tr>'
     
+    pageHTML= topHTML + adminTitle +topHTML2+formDott
+    with open("json/dottori.json", "r") as out:
+        lines = out.read()
+        dott=json.loads(lines)
+
+    for dottName in dott["name"]:
+        idx_name = dott["name"].index(dottName)
+        dottTable +="<tr><td>"+ dottName +"</td><td>"+ dott["surn"][idx_name] +"</td></tr>"
     
+    dottTable += formDottClose
+    pageHTML += dottTable + prenView
     
+    #generazione tabella prenotazioni
+    prenTable = '''<table><tr> <th>Nome</th><th>Cognome</th><th>Dottore</th>
+                    <th>Servizio</th></tr>'''
     
+    with open("json/prenotazioni.json", "r") as out:
+        lines = out.read()
+        pren=json.loads(lines)
+        
+    #costruzione della tabella prenotazioni
+    for pren in pren["prenotazioni"]:
+        prenTable += ('<tr><td>'+pren["name"]+'</td><td>'+pren["lastName"]+'</td><td>'+
+                        pren["doctor"]+'</td><td>'+pren["service"]+'</td></tr>')
+    prenTable +='</table></div>'
     
-    
-    
-    
+    pageHTML += prenTable+bottomHTML
+    return pageHTML;

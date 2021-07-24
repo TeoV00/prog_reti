@@ -18,9 +18,13 @@ import HTMLdataGenerate as HTMLgen
 #da installare pip install w3lib
 from w3lib.url import url_query_parameter as url_param
 
+ADMIN_PATH_PAGE = "html/admin.html"
+INFO_PATH = 'html/info.html'
+
 PRENOT_PAGE = '/prenVisita.html'
 ADMIN_PAGE = '/admin.html'
 COVID_PAGE = '/covid.html'
+INFO_PAGE = '/info.html'
 ADD_DOTT = 'add'
 RMV_DOTT = 'remove'
 PREN_PAGE = '/prenVisita.html'
@@ -84,7 +88,7 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         request = self.path
         # estrapolazione dati prenotazione ricevuti dal form
         nameDoctor= url_param( request,'dottName')
-        codeDoctor= url_param( request,'dottCode')
+        codeDoctor= url_param( request,'dottSurn')
         editMode= url_param(request, 'mode')
 #       print(nameDoctor)
 #       print(codeDoctor)
@@ -103,7 +107,7 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                            raise TypeError
                         else:
                            dott["name"].append(nameDoctor)
-                           dott["code"].append(codeDoctor)
+                           dott["surn"].append(codeDoctor)
                     else:
                        #richiesta di cancellazione dottore, effetuata solo 
                        #se presente nel database
@@ -114,7 +118,7 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                            #rimozione di nameDoctor e codeDoctor dal dizionario python
                            #che poi sara convertito in file json
                            dott["name"].pop(idx_name)
-                           dott["code"].pop(idx_name)
+                           dott["surn"].pop(idx_name)
                        
                        else:
                           raise TypeError
@@ -156,10 +160,11 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                     #digitata corrisonda con quella salvata nel database (login.json)
                     self.send_response(200)
                     self.end_headers()
-                    with open("admin.html", "r") as adminPage:
-                        self.wfile.write(bytes(adminPage.read(), 'utf-8'))
+                    adminHTMLpage = HTMLgen.genAdminHTMLPage()
+                    self.wfile.write(bytes(adminHTMLpage, 'utf-8'))
+
                 else:
-                    self.send_response(200)
+                    self.send_response(401)
                     self.end_headers()
                     self.wfile.write(bytes(loginErrorPage,'utf-8'))
                                     
@@ -182,7 +187,7 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             #l'aggiunta del medico
             if (request.__contains__(ADMIN_PAGE) and 
                 request.__contains__("dottName") and
-                request.__contains__("dottCode")):
+                request.__contains__("dottSurn")):
                 print("RICHIESTA AGGIUNTA DOTTORE")
                 self.editDoctorRequest()
             else:
@@ -204,6 +209,9 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                         #invio la pagina della prenotazione al client in risposta
                         self.wfile.write(bytes(prenHTML, 'utf-8'))
                     else:
+                        #se pagina info richiesta, reindirizzati alla corretta path
+                        if request == INFO_PAGE:
+                            self.path = INFO_PATH
                         #se non si tratta di nessun caso sopra chiamo il metodo del
                         #modulo per risolvere la richiesta e restituire il file
                         #, se presente nella path, corrispondente all 'url digitato

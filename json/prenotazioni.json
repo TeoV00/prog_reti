@@ -1,10 +1,5 @@
 {
  "prenotazioni":[
-{"name": "Paolo","lastName" :"De Paoli", "doctor" : "D01","service" : "tampone" }
-,{"name": "Mario","lastName" :"Rossi", "doctor" : "P4ol0","service" : "sangue" } 
-,{"name": "Paola","lastName" :"Rossini", "doctor" : "VI0","service" : "visita-specilistica" } 
-,{"name": "Manuela","lastName" :"Borghi", "doctor" : "09D","service" : "intervento" } 
-
-,{"name": "Felcances","lastName" :"Vicani", "doctor" : "Lug","service" : "visita-specilistica" } 
+{"name": "Paolo","lastName" :"De Paoli", "doctor" : "prova","service" : "tampone" }
 ] 
  }
